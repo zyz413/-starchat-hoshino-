@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小鸟游星野 - 聊天应用</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f0ff 0%, #e8f0ff 100%);
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+        
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 24px;
+            background: #8a6dc2;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 12px;
+        }
+        
+        .time {
+            font-weight: 500;
+        }
+        
+        .title-bar {
+            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .avatar i {
+            font-size: 24px;
+            color: #8a6dc2;
+        }
+        
+        .profile h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .profile p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .status {
+            margin-left: auto;
+            font-size: 12px;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+        
+        .chat-container {
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding: 12px;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e6e0ff' fill-opacity='0.3' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .message {
+            max-width: 85%;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .received {
+            align-self: flex-start;
+            background: white;
+            border-bottom-left-radius: 4px;
+            color: #333;
+            border-left: 3px solid #8a6dc2;
+        }
+        
+        .sent {
+            align-self: flex-end;
+            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        
+        .received .message-time {
+            text-align: left;
+        }
+        
+        .sent .message-time {
+            text-align: right;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            border-left: 3px solid #8a6dc2;
+        }
+        
+        .typing-dots {
+            display: flex;
+            align-items: center;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8a6dc2;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite;
+        }
+        
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .input-area {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 12px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e6e0ff;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            background: #f9f7ff;
+        }
+        
+        .input-area input:focus {
+            border-color: #8a6dc2;
+        }
+        
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
+            color: white;
+            border: none;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .auto-msg-tag {
+            font-size: 10px;
+            color: #888;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="status-bar">
+            <div class="time" id="currentTime">09:41</div>
+            <div class="status-icons">
+                <span id="batteryStatus">100%</span>
+            </div>
+        </div>
+        
+        <div class="title-bar">
+            <div class="avatar">
+                <i>星</i>
+            </div>
+            <div class="profile">
+                <h1>小鸟游星野</h1>
+                <p>在线 · 正在输入...</p>
+            </div>
+            <div class="status">好友</div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message received">
+                老师~早上好呀！今天也是充满希望的一天呢！
+                <div class="message-time">09:15</div>
+            </div>
+            
+            <div class="message sent">
+                早啊星野，昨晚睡得好吗？
+                <div class="message-time">09:16</div>
+            </div>
+            
+            <div class="message received">
+                嗯嗯~睡得很香！而且做了一个很甜的梦呢~
+                <div class="message-time">09:16</div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="和星野聊天..." onkeydown="handleKeyDown(event)">
+            <button class="send-btn" onclick="sendMessage()">
+                <i>发送</i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 智能对话系统
+        class StarChat {
+            constructor() {
+                this.conversation = {
+                    history: [],
+                    topic: '',
+                    mood: 'happy',
+                    lastActive: Date.now()
+                };
+                this.autoTimer = null;
+                this.isTyping = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.updateTime();
+                this.startAutoUpdate();
+                this.loadConversation();
+                
+                // 5秒后自动问候
+                setTimeout(() => this.sendAutoGreeting(), 5000);
+                
+                // 启动定时问候
+                this.startAutoMessaging();
+            }
+            
+            updateTime() {
+                const now = new Date();
+                const timeStr = now.toTimeString().slice(0, 5);
+                document.getElementById('currentTime').textContent = timeStr;
+                
+                // 更新电池状态
+                if (navigator.getBattery) {
+                    navigator.getBattery().then(battery => {
+                        const percent = Math.round(battery.level * 100);
+                        document.getElementById('batteryStatus').textContent = percent + '%';
+                    });
+                }
+                
+                // 每秒更新一次
+                setTimeout(() => this.updateTime(), 60000);
+            }
+            
+            startAutoUpdate() {
+                setInterval(() => {
+                    const now = new Date();
+                    const hour = now.getHours();
+                    const minute = now.getMinutes();
+                    
+                    // 每半小时检查一次是否发送自动消息
+                    if (minute % 30 === 0 && Math.random() > 0.7) {
+                        this.sendAutoMessage();
+                    }
+                }, 60000);
+            }
+            
+            loadConversation() {
+                const saved = localStorage.getItem('star_chat_history');
+                if (saved) {
+                    this.conversation.history = JSON.parse(saved);
+                    this.renderHistory();
+                }
+            }
+            
+            saveConversation() {
+                localStorage.setItem('star_chat_history', JSON.stringify(this.conversation.history));
+            }
+            
+            renderHistory() {
+                const container = document.getElementById('chatContainer');
+                container.innerHTML = '';
+                
+                this.conversation.history.forEach(msg => {
+                    this.addMessage(msg.text, msg.isUser, false);
+                });
+            }
+            
+            sendAutoGreeting() {
+                const hour = new Date().getHours();
+                let greeting = '';
+                
+                if (hour < 10) {
+                    greeting = "老师早上好~新的一天开始啦！要记得吃早餐哦~";
+                } else if (hour < 14) {
+                    greeting = "老师中午好！吃过午饭了吗？我有点饿了...";
+                } else if (hour < 18) {
+                    greeting = "老师下午好！工作/学习累了吗？要记得休息哦~";
+                } else {
+                    greeting = "老师晚上好~今天辛苦了！有什么想聊的吗？";
+                }
+                
+                this.addMessage(greeting, false, true);
+            }
+            
+            startAutoMessaging() {
+                // 每2-5分钟可能发送自动消息
+                this.autoTimer = setInterval(() => {
+                    if (this.conversation.history.length > 0) {
+                        const lastMsg = this.conversation.history[this.conversation.history.length - 1];
+                        const timeDiff = Date.now() - lastMsg.time;
+                        
+                        // 如果最后一条消息超过1分钟，可能发送自动消息
+                        if (timeDiff > 60000 && Math.random() > 0.7) {
+                            this.sendAutoMessage();
+                        }
+                    }
+                }, 120000);
+            }
+            
+            sendAutoMessage() {
+                if (this.isTyping) return;
+                
+                const messages = [
+                    "老师~我刚才看到窗外的云朵形状好可爱！",
+                    "突然好想吃甜点呀...老师喜欢什么甜点呢？",
+                    "老师今天过得开心吗？要记得保持微笑哦~",
+                    "我在想，如果能和老师一起去旅行该多好呀~",
+                    "老师最近有什么有趣的事情吗？想听听~",
+                    "啊，刚才泡的茶好香，心情都变好了！"
+                ];
+                
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                this.addMessage(message, false, true);
+            }
+            
+            addMessage(text, isUser, isAuto = false) {
+                const container = document.getElementById('chatContainer');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+                
+                const now = new Date();
+                const timeStr = now.toTimeString().slice(0, 5);
+                
+                let content = text;
+                if (isAuto && !isUser) {
+                    content += `<div class="auto-msg-tag">主动分享</div>`;
+                }
+                content += `<div class="message-time">${timeStr}</div>`;
+                
+                messageDiv.innerHTML = content;
+                container.appendChild(messageDiv);
+                
+                // 保存到历史
+                this.conversation.history.push({
+                    text: text,
+                    isUser: isUser,
+                    time: now.getTime()
+                });
+                
+                // 保存到本地存储
+                this.saveConversation();
+                
+                // 滚动到底部
+                container.scrollTop = container.scrollHeight;
+                
+                // 如果不是自动消息，可能触发自动回复
+                if (isUser && !isAuto) {
+                    setTimeout(() => this.generateReply(text), 1000);
+                }
+            }
+            
+            showTyping() {
+                this.isTyping = true;
+                const indicator = document.getElementById('typingIndicator');
+                indicator.style.display = 'block';
+                
+                const container = document.getElementById('chatContainer');
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            hideTyping() {
+                this.isTyping = false;
+                const indicator = document.getElementById('typingIndicator');
+                indicator.style.display = 'none';
+            }
+            
+            generateReply(userMessage) {
+                this.showTyping();
+                
+                // 模拟思考时间
+                const thinkTime = 1500 + Math.random() * 3000;
+                
+                setTimeout(() => {
+                    this.hideTyping();
+                    
+                    const reply = this.getReplyForMessage(userMessage);
+                    this.addMessage(reply, false, false);
+                    
+                    // 30%几率在回复后再发一条自动消息
+                    if (Math.random() > 0.7) {
+                        setTimeout(() => this.sendAutoMessage(), 3000);
+                    }
+                }, thinkTime);
+            }
+            
+            getReplyForMessage(message) {
+                const lowerMsg = message.toLowerCase();
+                
+                // 问候相关
+                if (lowerMsg.includes('你好') || lowerMsg.includes('早') || lowerMsg.includes('好')) {
+                    return "老师好呀~看到你我就很开心！";
+                }
+                
+                // 食物相关
+                if (lowerMsg.includes('饿') || lowerMsg.includes('吃') || lowerMsg.includes('饿')) {
+                    return "啊，老师也饿了吗？我好想吃草莓蛋糕呀~老师要不要一起？";
+                }
+                
+                // 休息相关
+                if (lowerMsg.includes('累') || lowerMsg.includes('困') || lowerMsg.includes('睡觉')) {
+                    return "老师累了吗？要好好休息哦~我可以陪你聊聊天放松一下！";
+                }
+                
+                // 情感相关
+                if (lowerMsg.includes('喜欢') || lowerMsg.includes('爱') || lowerMsg.includes('想')) {
+                    return "老师...突然说这个，我会害羞的啦~不过能和老师聊天我也很开心！";
+                }
+                
+                // 问题相关
+                if (message.includes('？') || message.includes('?')) {
+                    return "嗯...老师的问题让我想了一下。我觉得...我们可以慢慢聊这个话题呢~";
+                }
+                
+                // 分享相关
+                if (message.length > 10) {
+                    return "原来老师是这么想的呀~谢谢你和我说这些！";
+                }
+                
+                // 默认回复
+                const replies = [
+                    "嗯嗯~我在听哦！",
+                    "老师说得对呢~",
+                    "我明白啦！",
+                    "老师愿意和我聊天真好~",
+                    "能和老师这样聊天，我觉得好幸福！"
+                ];
+                
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+        }
+        
+        // 初始化聊天系统
+        const chatApp = new StarChat();
+        
+        // 处理发送消息
+        window.sendMessage = function() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                chatApp.addMessage(message, true, false);
+                input.value = '';
+            }
+        };
+        
+        // 处理键盘事件
+        window.handleKeyDown = function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+                event.preventDefault();
+            }
+        };
+    </script>
+</body>
+</html>
