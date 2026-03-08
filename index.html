@@ -3,51 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小鸟游星野 - 聊天应用</title>
+    <title>小鸟游星野 - 离线聊天</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, 'Microsoft YaHei', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f0ff 0%, #e8f0ff 100%);
+            background: linear-gradient(135deg, #f8f5ff 0%, #f0f4ff 100%);
             height: 100vh;
             color: #333;
             overflow: hidden;
         }
         
+        /* 应用容器 */
         .app-container {
             width: 100%;
             height: 100vh;
-            position: relative;
+            display: flex;
+            flex-direction: column;
         }
         
+        /* 状态栏模拟 */
         .status-bar {
             height: 24px;
-            background: #8a6dc2;
-            color: white;
+            background: linear-gradient(to right, #8a6dc2, #a38dc5);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 12px;
             font-size: 12px;
-        }
-        
-        .time {
-            font-weight: 500;
-        }
-        
-        .title-bar {
-            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
             color: white;
+        }
+        
+        /* 聊天头部 */
+        .chat-header {
+            background: linear-gradient(to right, #8a6dc2, #a38dc5);
             padding: 12px 16px;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .avatar {
@@ -59,38 +58,39 @@
             align-items: center;
             justify-content: center;
             margin-right: 12px;
-        }
-        
-        .avatar i {
-            font-size: 24px;
+            font-size: 20px;
             color: #8a6dc2;
+            font-weight: bold;
         }
         
         .profile h1 {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 2px;
         }
         
         .profile p {
             font-size: 12px;
-            opacity: 0.9;
+            color: rgba(255,255,255,0.9);
         }
         
         .status {
             margin-left: auto;
-            font-size: 12px;
+            font-size: 11px;
             background: rgba(255,255,255,0.2);
-            padding: 4px 8px;
-            border-radius: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
         }
         
-        .chat-container {
-            height: calc(100vh - 120px);
+        /* 聊天区域 */
+        .chat-area {
+            flex: 1;
             overflow-y: auto;
             padding: 12px;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e6e0ff' fill-opacity='0.3' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background: #f8f5ff;
         }
         
+        /* 消息气泡 */
         .message {
             max-width: 85%;
             margin-bottom: 10px;
@@ -108,7 +108,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .received {
+        .message.received {
             align-self: flex-start;
             background: white;
             border-bottom-left-radius: 4px;
@@ -116,9 +116,9 @@
             border-left: 3px solid #8a6dc2;
         }
         
-        .sent {
+        .message.sent {
             align-self: flex-end;
-            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
+            background: linear-gradient(to right, #8a6dc2, #a38dc5);
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -137,6 +137,45 @@
             text-align: right;
         }
         
+        /* 输入区域 */
+        .input-area {
+            padding: 10px 12px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e6e0ff;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            background: #f9f7ff;
+        }
+        
+        .input-area input:focus {
+            border-color: #8a6dc2;
+        }
+        
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #8a6dc2, #a38dc5);
+            color: white;
+            border: none;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        /* 打字指示器 */
         .typing-indicator {
             display: none;
             align-self: flex-start;
@@ -170,86 +209,48 @@
             50% { transform: translateY(-3px); }
         }
         
-        .input-area {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            padding: 10px 12px;
-            background: white;
-            border-top: 1px solid #eee;
-            display: flex;
-            align-items: center;
-        }
-        
-        .input-area input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e6e0ff;
-            border-radius: 25px;
-            font-size: 15px;
-            outline: none;
-            background: #f9f7ff;
-        }
-        
-        .input-area input:focus {
-            border-color: #8a6dc2;
-        }
-        
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(90deg, #8a6dc2, #a38dc5);
-            color: white;
-            border: none;
-            margin-left: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .auto-msg-tag {
+        /* 自动消息标签 */
+        .auto-tag {
             font-size: 10px;
             color: #888;
             margin-top: 2px;
+            font-style: italic;
+        }
+        
+        /* 离线状态提示 */
+        .offline-badge {
+            position: fixed;
+            top: 30px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="status-bar">
-            <div class="time" id="currentTime">09:41</div>
-            <div class="status-icons">
-                <span id="batteryStatus">100%</span>
-            </div>
+            <span id="currentTime">09:41</span>
+            <span>📶 100%</span>
         </div>
         
-        <div class="title-bar">
-            <div class="avatar">
-                <i>星</i>
-            </div>
+        <div class="chat-header">
+            <div class="avatar">星</div>
             <div class="profile">
                 <h1>小鸟游星野</h1>
-                <p>在线 · 正在输入...</p>
+                <p>离线模式 · 智能对话</p>
             </div>
-            <div class="status">好友</div>
+            <div class="status">在线</div>
         </div>
         
-        <div class="chat-container" id="chatContainer">
+        <div class="chat-area" id="chatArea">
             <div class="message received">
-                老师~早上好呀！今天也是充满希望的一天呢！
-                <div class="message-time">09:15</div>
-            </div>
-            
-            <div class="message sent">
-                早啊星野，昨晚睡得好吗？
-                <div class="message-time">09:16</div>
-            </div>
-            
-            <div class="message received">
-                嗯嗯~睡得很香！而且做了一个很甜的梦呢~
-                <div class="message-time">09:16</div>
+                老师~早上好！我是星野，一个完全离线运行的小助手哦！
+                <div class="message-time" id="initialTime">--:--</div>
             </div>
             
             <div class="typing-indicator" id="typingIndicator">
@@ -263,275 +264,399 @@
         
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="和星野聊天..." onkeydown="handleKeyDown(event)">
-            <button class="send-btn" onclick="sendMessage()">
-                <i>发送</i>
+            <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+                <span>发送</span>
             </button>
         </div>
+        
+        <div class="offline-badge">✅ 离线运行中</div>
     </div>
 
     <script>
-        // 智能对话系统
-        class StarChat {
+        // ==================== 核心对话系统 ====================
+        class OfflineChatAI {
             constructor() {
-                this.conversation = {
-                    history: [],
-                    topic: '',
-                    mood: 'happy',
-                    lastActive: Date.now()
-                };
-                this.autoTimer = null;
-                this.isTyping = false;
-                
-                this.init();
+                this.conversationMemory = [];
+                this.messageCount = 0;
+                this.lastUserActivity = Date.now();
+                this.autoMessageTimer = null;
+                this.userMood = 'neutral';
+                this.setupAutoMessages();
             }
             
-            init() {
-                this.updateTime();
-                this.startAutoUpdate();
-                this.loadConversation();
-                
-                // 5秒后自动问候
-                setTimeout(() => this.sendAutoGreeting(), 5000);
-                
-                // 启动定时问候
-                this.startAutoMessaging();
-            }
-            
-            updateTime() {
-                const now = new Date();
-                const timeStr = now.toTimeString().slice(0, 5);
-                document.getElementById('currentTime').textContent = timeStr;
-                
-                // 更新电池状态
-                if (navigator.getBattery) {
-                    navigator.getBattery().then(battery => {
-                        const percent = Math.round(battery.level * 100);
-                        document.getElementById('batteryStatus').textContent = percent + '%';
-                    });
-                }
-                
-                // 每秒更新一次
-                setTimeout(() => this.updateTime(), 60000);
-            }
-            
-            startAutoUpdate() {
-                setInterval(() => {
-                    const now = new Date();
-                    const hour = now.getHours();
-                    const minute = now.getMinutes();
-                    
-                    // 每半小时检查一次是否发送自动消息
-                    if (minute % 30 === 0 && Math.random() > 0.7) {
-                        this.sendAutoMessage();
-                    }
-                }, 60000);
-            }
-            
-            loadConversation() {
-                const saved = localStorage.getItem('star_chat_history');
-                if (saved) {
-                    this.conversation.history = JSON.parse(saved);
-                    this.renderHistory();
-                }
-            }
-            
-            saveConversation() {
-                localStorage.setItem('star_chat_history', JSON.stringify(this.conversation.history));
-            }
-            
-            renderHistory() {
-                const container = document.getElementById('chatContainer');
-                container.innerHTML = '';
-                
-                this.conversation.history.forEach(msg => {
-                    this.addMessage(msg.text, msg.isUser, false);
-                });
-            }
-            
-            sendAutoGreeting() {
-                const hour = new Date().getHours();
-                let greeting = '';
-                
-                if (hour < 10) {
-                    greeting = "老师早上好~新的一天开始啦！要记得吃早餐哦~";
-                } else if (hour < 14) {
-                    greeting = "老师中午好！吃过午饭了吗？我有点饿了...";
-                } else if (hour < 18) {
-                    greeting = "老师下午好！工作/学习累了吗？要记得休息哦~";
-                } else {
-                    greeting = "老师晚上好~今天辛苦了！有什么想聊的吗？";
-                }
-                
-                this.addMessage(greeting, false, true);
-            }
-            
-            startAutoMessaging() {
-                // 每2-5分钟可能发送自动消息
-                this.autoTimer = setInterval(() => {
-                    if (this.conversation.history.length > 0) {
-                        const lastMsg = this.conversation.history[this.conversation.history.length - 1];
-                        const timeDiff = Date.now() - lastMsg.time;
-                        
-                        // 如果最后一条消息超过1分钟，可能发送自动消息
-                        if (timeDiff > 60000 && Math.random() > 0.7) {
-                            this.sendAutoMessage();
-                        }
-                    }
-                }, 120000);
-            }
-            
-            sendAutoMessage() {
-                if (this.isTyping) return;
-                
-                const messages = [
-                    "老师~我刚才看到窗外的云朵形状好可爱！",
-                    "突然好想吃甜点呀...老师喜欢什么甜点呢？",
-                    "老师今天过得开心吗？要记得保持微笑哦~",
-                    "我在想，如果能和老师一起去旅行该多好呀~",
-                    "老师最近有什么有趣的事情吗？想听听~",
-                    "啊，刚才泡的茶好香，心情都变好了！"
-                ];
-                
-                const message = messages[Math.floor(Math.random() * messages.length)];
-                this.addMessage(message, false, true);
-            }
-            
-            addMessage(text, isUser, isAuto = false) {
-                const container = document.getElementById('chatContainer');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
-                
-                const now = new Date();
-                const timeStr = now.toTimeString().slice(0, 5);
-                
-                let content = text;
-                if (isAuto && !isUser) {
-                    content += `<div class="auto-msg-tag">主动分享</div>`;
-                }
-                content += `<div class="message-time">${timeStr}</div>`;
-                
-                messageDiv.innerHTML = content;
-                container.appendChild(messageDiv);
-                
-                // 保存到历史
-                this.conversation.history.push({
-                    text: text,
-                    isUser: isUser,
-                    time: now.getTime()
-                });
-                
-                // 保存到本地存储
-                this.saveConversation();
-                
-                // 滚动到底部
-                container.scrollTop = container.scrollHeight;
-                
-                // 如果不是自动消息，可能触发自动回复
-                if (isUser && !isAuto) {
-                    setTimeout(() => this.generateReply(text), 1000);
-                }
-            }
-            
-            showTyping() {
-                this.isTyping = true;
-                const indicator = document.getElementById('typingIndicator');
-                indicator.style.display = 'block';
-                
-                const container = document.getElementById('chatContainer');
-                container.scrollTop = container.scrollHeight;
-            }
-            
-            hideTyping() {
-                this.isTyping = false;
-                const indicator = document.getElementById('typingIndicator');
-                indicator.style.display = 'none';
-            }
-            
-            generateReply(userMessage) {
-                this.showTyping();
-                
-                // 模拟思考时间
-                const thinkTime = 1500 + Math.random() * 3000;
-                
-                setTimeout(() => {
-                    this.hideTyping();
-                    
-                    const reply = this.getReplyForMessage(userMessage);
-                    this.addMessage(reply, false, false);
-                    
-                    // 30%几率在回复后再发一条自动消息
-                    if (Math.random() > 0.7) {
-                        setTimeout(() => this.sendAutoMessage(), 3000);
-                    }
-                }, thinkTime);
-            }
-            
-            getReplyForMessage(message) {
+            // 分析用户意图
+            analyzeIntent(message) {
                 const lowerMsg = message.toLowerCase();
                 
-                // 问候相关
-                if (lowerMsg.includes('你好') || lowerMsg.includes('早') || lowerMsg.includes('好')) {
-                    return "老师好呀~看到你我就很开心！";
+                // 问候类
+                if (/(你好|嗨|早上好|晚上好|午安|晚安)/.test(lowerMsg)) {
+                    return 'greeting';
                 }
                 
-                // 食物相关
-                if (lowerMsg.includes('饿') || lowerMsg.includes('吃') || lowerMsg.includes('饿')) {
-                    return "啊，老师也饿了吗？我好想吃草莓蛋糕呀~老师要不要一起？";
+                // 问题类
+                if (/[？?]$/.test(lowerMsg) || /(什么|为什么|怎么|如何|吗|呢)/.test(lowerMsg)) {
+                    return 'question';
                 }
                 
-                // 休息相关
-                if (lowerMsg.includes('累') || lowerMsg.includes('困') || lowerMsg.includes('睡觉')) {
-                    return "老师累了吗？要好好休息哦~我可以陪你聊聊天放松一下！";
+                // 情感表达
+                if (/(喜欢|爱|讨厌|生气|开心|难过|害怕)/.test(lowerMsg)) {
+                    return 'emotion';
                 }
                 
-                // 情感相关
-                if (lowerMsg.includes('喜欢') || lowerMsg.includes('爱') || lowerMsg.includes('想')) {
-                    return "老师...突然说这个，我会害羞的啦~不过能和老师聊天我也很开心！";
+                // 分享类
+                if (/我(的|也|想|觉得|要)/.test(lowerMsg) && message.length > 3) {
+                    return 'sharing';
                 }
                 
-                // 问题相关
-                if (message.includes('？') || message.includes('?')) {
-                    return "嗯...老师的问题让我想了一下。我觉得...我们可以慢慢聊这个话题呢~";
+                // 命令类
+                if (/(介绍|说明|帮助)/.test(lowerMsg)) {
+                    return 'command';
                 }
                 
-                // 分享相关
-                if (message.length > 10) {
-                    return "原来老师是这么想的呀~谢谢你和我说这些！";
+                return 'general';
+            }
+            
+            // 生成智能回复
+            generateResponse(userMessage) {
+                const intent = this.analyzeIntent(userMessage);
+                this.messageCount++;
+                this.lastUserActivity = Date.now();
+                
+                // 记录对话
+                this.conversationMemory.push({
+                    message: userMessage,
+                    intent: intent,
+                    time: Date.now()
+                });
+                
+                // 根据意图生成回复
+                let response = '';
+                
+                switch(intent) {
+                    case 'greeting':
+                        response = this.generateGreeting(userMessage);
+                        break;
+                    case 'question':
+                        response = this.answerQuestion(userMessage);
+                        break;
+                    case 'emotion':
+                        response = this.respondToEmotion(userMessage);
+                        break;
+                    case 'sharing':
+                        response = this.respondToSharing(userMessage);
+                        break;
+                    case 'command':
+                        response = this.respondToCommand(userMessage);
+                        break;
+                    default:
+                        response = this.generateGeneralResponse(userMessage);
                 }
                 
-                // 默认回复
-                const replies = [
-                    "嗯嗯~我在听哦！",
-                    "老师说得对呢~",
-                    "我明白啦！",
-                    "老师愿意和我聊天真好~",
-                    "能和老师这样聊天，我觉得好幸福！"
+                return response;
+            }
+            
+            // 生成问候回复
+            generateGreeting(userMessage) {
+                const hour = new Date().getHours();
+                const greetings = [
+                    "老师好呀~看到你真开心！",
+                    "嗨！老师今天过得怎么样？",
+                    "老师你来啦~我一直在等你呢！"
                 ];
                 
-                return replies[Math.floor(Math.random() * replies.length)];
+                if (userMessage.includes('早上好') || userMessage.includes('早安')) {
+                    return "老师早上好！今天也是充满希望的一天呢~";
+                } else if (userMessage.includes('晚上好') || userMessage.includes('晚安')) {
+                    return hour < 18 ? "老师晚上好~今天辛苦啦！" : "老师晚安~做个好梦哦！";
+                }
+                
+                return greetings[Math.floor(Math.random() * greetings.length)];
+            }
+            
+            // 回答问题
+            answerQuestion(question) {
+                const responses = [
+                    "嗯...这个问题让我想想...",
+                    "老师问得真好~让我思考一下...",
+                    "这个问题有点意思呢..."
+                ];
+                
+                const prefix = responses[Math.floor(Math.random() * responses.length)];
+                
+                if (question.includes('什么')) {
+                    return `${prefix} 老师想知道什么呢？我可以试着解释一下~`;
+                } else if (question.includes('为什么')) {
+                    return `${prefix} 为什么会这样呢...我觉得可能有几个原因`;
+                } else if (question.includes('怎么')) {
+                    return `${prefix} 要怎么做呢...让我想想办法~`;
+                } else if (question.includes('吗')) {
+                    return `${prefix} 这个嘛...让我考虑一下再回答老师~`;
+                }
+                
+                return `${prefix} 老师的问题很有趣呢~`;
+            }
+            
+            // 回应情感
+            respondToEmotion(message) {
+                if (message.includes('喜欢') || message.includes('爱')) {
+                    return "老师...突然说这个，我会害羞的啦~不过能和老师聊天我也很开心！";
+                } else if (message.includes('开心')) {
+                    return "看到老师开心，我也好高兴！老师笑起来最好看了~";
+                } else if (message.includes('难过')) {
+                    return "老师不要难过...虽然我不太会安慰人，但我会一直在这里陪着老师的。";
+                } else if (message.includes('生气')) {
+                    return "老师不要生气啦~生气对身体不好哦，我陪老师说说话吧！";
+                } else if (message.includes('害怕')) {
+                    return "老师不要怕~有我在呢！虽然我可能也帮不上什么忙...";
+                }
+                
+                return "老师的心情我能感受到呢~";
+            }
+            
+            // 回应分享
+            respondToSharing(message) {
+                const responses = [
+                    "原来老师是这么想的呀~我明白了！",
+                    "谢谢老师和我说这些，我会好好记住的~",
+                    "老师愿意和我分享这些，我好开心！",
+                    "原来如此~老师说得对呢！"
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // 回应命令
+            respondToCommand(message) {
+                if (message.includes('介绍') || message.includes('你是谁')) {
+                    return "我是小鸟游星野，一个完全离线运行的智能聊天助手~虽然有点迷糊，但对老师的事情会很认真！";
+                } else if (message.includes('帮助')) {
+                    return "我可以陪老师聊天、回答问题、分享心情~虽然可能回答得不完美，但我会尽力的！";
+                }
+                
+                return "老师想让我做什么呢？我会尽力帮忙的~";
+            }
+            
+            // 生成一般回复
+            generateGeneralResponse(message) {
+                if (message.length < 5) {
+                    const shortResponses = [
+                        "嗯嗯~",
+                        "我在听哦！",
+                        "然后呢？",
+                        "老师继续说~"
+                    ];
+                    return shortResponses[Math.floor(Math.random() * shortResponses.length)];
+                }
+                
+                const generalResponses = [
+                    "原来是这样呀~",
+                    "老师说得对！",
+                    "我明白啦！",
+                    "能和老师这样聊天真好~"
+                ];
+                
+                return generalResponses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // 生成自动消息
+            generateAutoMessage() {
+                const hour = new Date().getHours();
+                const autoMessages = [
+                    "老师~我刚才想到一件有趣的事！",
+                    "突然好想和老师说说话呀~",
+                    "老师在做什么呢？",
+                    "今天天气真好，心情也跟着变好了~",
+                    "我泡了杯茶，老师要喝吗？虽然只是想象啦~",
+                    "老师还记得我们第一次聊天的时候吗？"
+                ];
+                
+                // 根据时间调整消息
+                if (hour < 10) {
+                    return "老师早上好呀~新的一天开始啦！";
+                } else if (hour < 14) {
+                    return "老师中午好！吃过午饭了吗？";
+                } else if (hour < 18) {
+                    return "老师下午好！工作/学习累了吗？要记得休息哦~";
+                } else {
+                    return "老师晚上好~今天过得开心吗？";
+                }
+                
+                return autoMessages[Math.floor(Math.random() * autoMessages.length)];
+            }
+            
+            // 设置自动消息
+            setupAutoMessages() {
+                // 每2-5分钟检查是否需要发送自动消息
+                this.autoMessageTimer = setInterval(() => {
+                    const inactiveTime = Date.now() - this.lastUserActivity;
+                    if (inactiveTime > 60000 && this.messageCount > 0) { // 1分钟不活跃
+                        if (Math.random() > 0.7) { // 30%几率发送
+                            const message = this.generateAutoMessage();
+                            this.triggerAutoMessage(message);
+                        }
+                    }
+                }, 120000); // 每2分钟检查一次
+            }
+            
+            triggerAutoMessage(message) {
+                if (typeof window.onAutoMessage === 'function') {
+                    window.onAutoMessage(message);
+                }
+            }
+            
+            // 清理
+            cleanup() {
+                if (this.autoMessageTimer) {
+                    clearInterval(this.autoMessageTimer);
+                }
             }
         }
         
-        // 初始化聊天系统
-        const chatApp = new StarChat();
+        // ==================== 应用逻辑 ====================
+        const chatAI = new OfflineChatAI();
         
-        // 处理发送消息
-        window.sendMessage = function() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+        // 获取DOM元素
+        const chatArea = document.getElementById('chatArea');
+        const messageInput = document.getElementById('messageInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        // 初始化时间
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                           now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = timeStr;
             
-            if (message) {
-                chatApp.addMessage(message, true, false);
-                input.value = '';
+            // 更新初始消息时间
+            const initialTime = document.getElementById('initialTime');
+            if (initialTime.textContent === '--:--') {
+                initialTime.textContent = timeStr;
             }
-        };
+            
+            // 每分钟更新一次
+            setTimeout(updateTime, 60000);
+        }
+        
+        // 添加消息到聊天区域
+        function addMessage(text, isUser = false, isAuto = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+            
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                           now.getMinutes().toString().padStart(2, '0');
+            
+            let content = text;
+            if (isAuto) {
+                content += '<div class="auto-tag">🌟 主动分享</div>';
+            }
+            content += `<div class="message-time">${timeStr}</div>`;
+            
+            messageDiv.innerHTML = content;
+            chatArea.appendChild(messageDiv);
+            
+            // 滚动到底部
+            setTimeout(() => {
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 100);
+        }
+        
+        // 显示打字指示器
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        // 隐藏打字指示器
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+        
+        // 模拟思考时间
+        function simulateThinking(userMessage) {
+            showTyping();
+            
+            // 根据消息长度决定思考时间
+            const thinkTime = 1000 + Math.min(userMessage.length * 20, 3000);
+            
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    hideTyping();
+                    const response = chatAI.generateResponse(userMessage);
+                    resolve(response);
+                }, thinkTime);
+            });
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // 添加用户消息
+            addMessage(message, true);
+            messageInput.value = '';
+            
+            // 禁用发送按钮
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+            
+            try {
+                // 生成回复
+                const response = await simulateThinking(message);
+                
+                // 添加回复消息
+                addMessage(response, false);
+                
+            } catch (error) {
+                console.error('生成回复时出错:', error);
+                addMessage("唔...我刚刚走神了，老师能再说一遍吗？", false);
+            } finally {
+                // 启用发送按钮
+                sendBtn.disabled = false;
+                sendBtn.style.opacity = '1';
+                messageInput.focus();
+            }
+        }
         
         // 处理键盘事件
-        window.handleKeyDown = function(event) {
+        function handleKeyDown(event) {
             if (event.key === 'Enter') {
-                sendMessage();
                 event.preventDefault();
+                sendMessage();
             }
+        }
+        
+        // 自动消息回调
+        window.onAutoMessage = function(message) {
+            addMessage(message, false, true);
+        };
+        
+        // 页面加载完成
+        window.onload = function() {
+            // 更新时间
+            updateTime();
+            
+            // 3秒后发送欢迎消息
+            setTimeout(() => {
+                addMessage("我可以在完全离线的情况下和老师聊天哦~有什么想说的都可以告诉我！", false, true);
+            }, 3000);
+            
+            // 聚焦输入框
+            messageInput.focus();
+            
+            // 10秒后检查是否活跃，不活跃则发送消息
+            setTimeout(() => {
+                if (chatAI.messageCount === 0) {
+                    addMessage("老师今天想聊些什么呢？我随时都在哦~", false, true);
+                }
+            }, 10000);
+        };
+        
+        // 页面卸载时清理
+        window.onbeforeunload = function() {
+            chatAI.cleanup();
         };
     </script>
 </body>
